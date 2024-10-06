@@ -40,6 +40,11 @@ export const posts = createTable(
   })
 );
 
+enum UserRole {
+  USER = "USER",
+  ADMIN = "ADMIN",
+}
+
 export const users = createTable("user", {
   id: varchar("id", { length: 255 })
     .notNull()
@@ -52,6 +57,7 @@ export const users = createTable("user", {
     withTimezone: true,
   }).default(sql`CURRENT_TIMESTAMP`),
   image: varchar("image", { length: 255 }),
+  role: varchar("role", { length: 255 }).$type<UserRole>().notNull().default(UserRole.USER),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({

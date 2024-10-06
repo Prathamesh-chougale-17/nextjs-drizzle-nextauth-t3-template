@@ -5,7 +5,8 @@ import {
   type NextAuthOptions,
 } from "next-auth";
 import { type Adapter } from "next-auth/adapters";
-import DiscordProvider from "next-auth/providers/discord";
+// import DiscordProvider from "next-auth/providers/discord";
+import Google from "next-auth/providers/google";
 
 import { env } from "~/env";
 import { db } from "~/server/db";
@@ -23,18 +24,21 @@ import {
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
 declare module "next-auth" {
+
+  type UserRole = "USER" | "ADMIN";
+
   interface Session extends DefaultSession {
     user: {
       id: string;
       // ...other properties
-      // role: UserRole;
+      role: UserRole;
     } & DefaultSession["user"];
   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+  interface User {
+    // ...other properties
+    role: UserRole;
+  }
 }
 
 /**
@@ -59,10 +63,10 @@ export const authOptions: NextAuthOptions = {
     verificationTokensTable: verificationTokens,
   }) as Adapter,
   providers: [
-    DiscordProvider({
-      clientId: env.DISCORD_CLIENT_ID,
-      clientSecret: env.DISCORD_CLIENT_SECRET,
-    }),
+    Google({
+      clientId: env.GOOGLE_CLIENT_ID,
+      clientSecret: env.GOOGLE_CLIENT_SECRET,
+    })
     /**
      * ...add more providers here.
      *
